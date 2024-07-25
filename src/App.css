@@ -8,6 +8,7 @@
 
 .tab-navigation {
   display: flex;
+  flex-wrap: wrap; /* Allows wrapping of tabs on smaller screens */
 }
 
 .tab-navigation a {
@@ -19,6 +20,8 @@
   border-radius: 5px 5px 0 0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, box-shadow 0.3s;
+  flex: 1 1 auto; /* Ensures tabs are flexible and can shrink/grow */
+  text-align: center;
 }
 
 .tab-navigation a:hover {
@@ -36,4 +39,23 @@
   padding: 30px;
   background-color: #e0e0e0;
   border-radius: 0 5px 5px 5px;
+}
+
+/* Media queries for smaller devices */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 10px;
+  }
+
+  .tab-navigation {
+    flex-direction: column;
+  }
+
+  .tab-navigation a {
+    margin: 5px 0;
+  }
+
+  .tab-content {
+    padding: 20px;
+  }
 }
