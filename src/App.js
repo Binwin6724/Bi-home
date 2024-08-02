@@ -18,7 +18,6 @@ function App() {
           <NavLink to="/" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Home</NavLink>
           <NavLink to="/converter" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Square Feet</NavLink>
           <NavLink to="/height-converter" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Height Converter</NavLink>
-          <NavLink to="/facebook-webhook" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Facebook Webhook</NavLink>
           <NavLink to="/expense-tracker" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Expense Tracker</NavLink>
           <NavLink to="/experience-calculator" className={({ isActive }) => (isActive ? 'active-tab' : '')}>Experience Calculator</NavLink>
           <NavLink to="/cv-maker" className={({ isActive }) => (isActive ? 'active-tab' : '')}>CV Maker</NavLink>
@@ -28,7 +27,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/converter" element={<SquareFeetConverter />} />
             <Route path="/height-converter" element={<HeightConverter />} />
-            <Route path="/facebook-webhook" element={<FacebookWebhook />} />
             <Route path="/expense-tracker" element={<ExpenseTracker />} />
             <Route path="/experience-calculator" element={<ExperienceCalculator />} />
             <Route path="/cv-maker" element={<CVMaker />} />
