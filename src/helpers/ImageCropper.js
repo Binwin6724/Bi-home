@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
+const MAX_CANVAS_SIZE = { width: 500, height: 500 }; // Set your max width and height
+
 const ImageCropper = ({ photo, setCroppedPhoto }) => {
   const canvasRef = useRef(null);
   const [image, setImage] = useState(null);
@@ -29,10 +31,17 @@ const ImageCropper = ({ photo, setCroppedPhoto }) => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = img.width;
-    canvas.height = img.height;
+    // Calculate the scale to maintain aspect ratio
+    const scale = Math.min(MAX_CANVAS_SIZE.width / img.width, MAX_CANVAS_SIZE.height / img.height);
+    const width = img.width * scale;
+    const height = img.height * scale;
+
+    // Set canvas dimensions based on the scaled image
+    canvas.width = width;
+    canvas.height = height;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, width, height);
   };
 
   const handleMouseDown = (e) => {
@@ -69,8 +78,10 @@ const ImageCropper = ({ photo, setCroppedPhoto }) => {
     const ctx = canvas.getContext("2d");
     if (!ctx || !image) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    // Redraw the image
+    drawImage(image);
+
+    // Draw the cropping rectangle
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
     ctx.strokeRect(crop.x, crop.y, crop.size, crop.size);
@@ -108,8 +119,8 @@ const ImageCropper = ({ photo, setCroppedPhoto }) => {
     <div>
       <canvas
         ref={canvasRef}
-        width="500"
-        height="500"
+        width={MAX_CANVAS_SIZE.width}
+        height={MAX_CANVAS_SIZE.height}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
