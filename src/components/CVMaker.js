@@ -33,10 +33,12 @@ const CVMaker = () => {
   const [croppedPhoto, setCroppedPhoto] = useState(null);
 
   const handleInputChange = (e, index, type) => {
-    const { name, value, type: inputType } = e.target;
+    const { name, value, checked, type: inputType } = e.target;
+    const updatedValue = inputType === "checkbox" ? checked : value;
+
     if (type === "education") {
       const list = [...education];
-      list[index][name] = inputType === "checkbox" ? e.target.checked : value;
+      list[index][name] = updatedValue; // Handles both checkboxes and other inputs
       setEducation(list);
     } else if (type === "experience") {
       const list = [...experience];
@@ -94,6 +96,12 @@ const CVMaker = () => {
     setCustomSections(list);
   };
 
+  // Function to remove the uploaded photo
+  const removePhoto = () => {
+    setPersonalInfo({ ...personalInfo, photo: null });
+    setCroppedPhoto(null);
+  };
+
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -106,39 +114,37 @@ const CVMaker = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageHeight = doc.internal.pageSize.height;
-  
-    // Start Y position for the content below the image
-    let currentY = 80; // Adjust based on the expected height of the image
-  
+
     if (croppedPhoto) {
-      // Ensure `croppedPhoto` is a data URL. If it's a Blob, convert it first
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         const imgData = event.target.result;
-        addImageToPDF(doc, imgData, currentY, pageHeight);
+        // Add image to PDF and start content 80 units down
+        addImageToPDF(doc, imgData, () => addPdfContent(doc, 80, pageHeight));
       };
       if (croppedPhoto instanceof Blob) {
         reader.readAsDataURL(croppedPhoto); // Convert Blob to Data URL
       } else {
         // Assume `croppedPhoto` is already a Data URL
-        addImageToPDF(doc, croppedPhoto, currentY, pageHeight);
+        addImageToPDF(doc, croppedPhoto, () =>
+          addPdfContent(doc, 80, pageHeight)
+        );
       }
     } else {
-      // No image, start adding content immediately
-      addPdfContent(doc, currentY, pageHeight);
+      // No image, start adding content immediately at 10 units down
+      addPdfContent(doc, 10, pageHeight);
     }
   };
-  
-  const addImageToPDF = (doc, imgData, currentY, pageHeight) => {
+
+  const addImageToPDF = (doc, imgData, callback) => {
     const imageWidth = 50; // Set image width
     const imageHeight = 50; // Set image height
     const imageX = (doc.internal.pageSize.getWidth() - imageWidth) / 2; // Center the image horizontally
-  
-    doc.addImage(imgData, 'JPEG', imageX, 10, imageWidth, imageHeight); // Adjust Y position as needed
-  
-    // Continue with the rest of the PDF content
-    addPdfContent(doc, currentY, pageHeight);
+
+    doc.addImage(imgData, "JPEG", imageX, 10, imageWidth, imageHeight); // Add the image at the very top
+    callback(); // Continue with the rest of the PDF content
   };
+
   const addPdfContent = (doc, startY, pageHeight) => {
     let currentY = startY;
 
@@ -175,16 +181,15 @@ const CVMaker = () => {
 
       education.forEach((edu) => {
         const eduText = `${edu.degree} at ${edu.institution}`;
-        const eduDetails = `(${edu.startDate} - ${edu.endDate || "Present"})`;
+        const eduDetails = `(${edu.startDate} - ${
+          edu.isCurrent ? "Present" : edu.endDate || "No end date provided"
+        })`; // Improved handling for present or undefined end date
         const gradeText = edu.grade
           ? `Grade: ${edu.grade} (${edu.gradeFormat})`
-          : "";
-        const descriptionHeight =
-          doc.splitTextToSize(edu.description, 180).length * 6;
+          : "Grade: Not specified"; // Shows a default message if no grade specified
 
         // Calculate the total height needed for the education block
-        const requiredHeight =
-          6 + 6 + (gradeText ? 6 : 0) + descriptionHeight + 10;
+        const requiredHeight = 6 + 6 + (gradeText ? 6 : 0) + 10;
 
         checkPageOverflow(requiredHeight); // Check before adding content
 
@@ -197,7 +202,6 @@ const CVMaker = () => {
           doc.text(gradeText, 10, currentY);
           currentY += 6;
         }
-        currentY = addMultiLineText(doc, edu.description, 10, currentY);
         currentY += 10; // Add some space after each entry
       });
       currentY += 5;
@@ -213,9 +217,13 @@ const CVMaker = () => {
 
       experience.forEach((exp) => {
         const expText = `${exp.jobTitle} at ${exp.company}`;
-        const expDetails = `(${exp.startDate} - ${exp.endDate || "Present"})`;
+        // Enhanced handling for 'Present' or no 'endDate' provided
+        const expDetails = `(${exp.startDate} - ${
+          exp.isCurrent ? "Present" : exp.endDate || "No end date provided"
+        })`;
+        const descriptionText = exp.description || "No description provided"; // Placeholder if no description
         const descriptionHeight =
-          doc.splitTextToSize(exp.description, 180).length * 6;
+          doc.splitTextToSize(descriptionText, 180).length * 6;
 
         // Calculate the total height needed for the experience block
         const requiredHeight = 6 + 6 + descriptionHeight + 10;
@@ -227,7 +235,7 @@ const CVMaker = () => {
         currentY += 6;
         doc.text(expDetails, 10, currentY);
         currentY += 6;
-        currentY = addMultiLineText(doc, exp.description, 10, currentY);
+        currentY = addMultiLineText(doc, descriptionText, 10, currentY);
         currentY += 10; // Add some space after each entry
       });
       currentY += 5;
@@ -330,10 +338,13 @@ const CVMaker = () => {
         <label>Upload Photo:</label>
         <input type="file" accept="image/*" onChange={handlePhotoUpload} />
         {personalInfo.photo && (
-          <ImageCropper
-            photo={personalInfo.photo}
-            setCroppedPhoto={setCroppedPhoto}
-          />
+          <>
+            <ImageCropper
+              photo={personalInfo.photo}
+              setCroppedPhoto={setCroppedPhoto}
+            />
+            <button onClick={removePhoto}>Remove Photo</button>
+          </>
         )}
       </div>
 
@@ -348,6 +359,7 @@ const CVMaker = () => {
               value={edu.institution}
               onChange={(e) => handleInputChange(e, index, "education")}
             />
+
             <label>Degree:</label>
             <input
               type="text"
@@ -355,6 +367,7 @@ const CVMaker = () => {
               value={edu.degree}
               onChange={(e) => handleInputChange(e, index, "education")}
             />
+
             <label>Start Date:</label>
             <input
               type="date"
@@ -362,23 +375,35 @@ const CVMaker = () => {
               value={edu.startDate}
               onChange={(e) => handleInputChange(e, index, "education")}
             />
+
             <label>End Date:</label>
             <input
               type="date"
               name="endDate"
-              value={edu.isCurrent ? "Present" : edu.endDate}
+              value={edu.endDate}
               onChange={(e) => handleInputChange(e, index, "education")}
               disabled={edu.isCurrent}
             />
+
             <div className="checkbox-container">
-              <label> Currently Studying</label>
+              <label>Currently Studying:</label>
               <input
                 type="checkbox"
                 name="isCurrent"
-                checked={edu.isCurrent}
-                onChange={(e) => handleInputChange(e, index, "education")}
+                checked={edu.isCurrent || false}
+                onChange={(e) => {
+                  // Toggle isCurrent and clear endDate if checked
+                  const updatedEducation = [...education];
+                  updatedEducation[index] = {
+                    ...updatedEducation[index],
+                    isCurrent: !edu.isCurrent,
+                    endDate: !edu.isCurrent ? null : edu.endDate,
+                  };
+                  setEducation(updatedEducation);
+                }}
               />
             </div>
+
             <label>Grade:</label>
             <input
               type="text"
@@ -386,6 +411,7 @@ const CVMaker = () => {
               value={edu.grade}
               onChange={(e) => handleInputChange(e, index, "education")}
             />
+
             <label>Grade Format:</label>
             <select
               name="gradeFormat"
@@ -396,11 +422,13 @@ const CVMaker = () => {
               <option value="Percentage">Percentage</option>
               <option value="Other">Other</option>
             </select>
+
             <button onClick={() => handleDeleteClick(index, "education")}>
               Delete
             </button>
           </div>
         ))}
+
         <button onClick={() => handleAddClick("education")}>
           Add Education
         </button>
