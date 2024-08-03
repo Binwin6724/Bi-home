@@ -1,42 +1,59 @@
-// src/components/TagInput.js
 import React, { useState } from 'react';
-import '../css/TagInput.css';
+import '../css/TagInput.css';  // Make sure to import the CSS styles
 
 const TagInput = ({ tags, setTags }) => {
-  const [input, setInput] = useState('');
+    const [input, setInput] = useState('');
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && input) {
-      if (!tags.includes(input)) {
-        setTags([...tags, input]);
-      }
-      setInput('');
-    } else if (e.key === 'Backspace' && !input) {
-      removeTag(tags.length - 1);
-    }
-  };
+    const handleChange = (event) => {
+        setInput(event.target.value);
+    };
 
-  const removeTag = (index) => {
-    setTags(tags.filter((_, i) => i !== index));
-  };
+    const handleKeyDown = (event) => {
+        if (['Enter', ','].includes(event.key)) {
+            event.preventDefault();
+            const value = input.trim();
 
-  return (
-    <div className="tag-input-container">
-      {tags.map((tag, index) => (
-        <div className="tag" key={index}>
-          {tag}
-          <span onClick={() => removeTag(index)}>x</span>
+            if (value && !tags.includes(value)) {
+                setTags([...tags, value]);
+                setInput('');
+            }
+        }
+
+        if (event.key === 'Backspace' && !input) {
+            removeTag(tags.length - 1);
+        }
+    };
+
+    const handlePaste = (event) => {
+        event.preventDefault();
+        const paste = event.clipboardData.getData('text');
+        const skills = paste.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0 && !tags.includes(skill));
+
+        setTags([...tags, ...skills]);
+    };
+
+    const removeTag = (index) => {
+        setTags(tags.filter((tag, i) => i !== index));
+    };
+
+    return (
+        <div className="tag-input-container">
+            {tags.map((tag, index) => (
+                <div key={index} className="tag">
+                    {tag}
+                    <span onClick={() => removeTag(index)}>×</span>
+                </div>
+            ))}
+            <input
+                type="text"
+                value={input}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
+                placeholder="Add skills"
+            />
         </div>
-      ))}
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Press enter to add skills"
-      />
-    </div>
-  );
+    );
 };
 
 export default TagInput;
