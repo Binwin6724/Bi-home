@@ -1,4 +1,3 @@
-// src/components/CVMaker.js
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
@@ -17,7 +16,14 @@ const CVMaker = () => {
     photoURL: "",
   });
   const [education, setEducation] = useState([
-    { institution: "", degree: "", startDate: "", endDate: "" },
+    {
+      institution: "",
+      degree: "",
+      startDate: "",
+      endDate: "",
+      grade: "",
+      gradeFormat: "CGPA",
+    },
   ]);
   const [experience, setExperience] = useState([
     { jobTitle: "", company: "", startDate: "", endDate: "", description: "" },
@@ -27,14 +33,14 @@ const CVMaker = () => {
   const [croppedPhoto, setCroppedPhoto] = useState(null);
 
   const handleInputChange = (e, index, type) => {
-    const { name, value } = e.target;
+    const { name, value, type: inputType } = e.target;
     if (type === "education") {
       const list = [...education];
-      list[index][name] = value;
+      list[index][name] = inputType === "checkbox" ? e.target.checked : value;
       setEducation(list);
     } else if (type === "experience") {
       const list = [...experience];
-      list[index][name] = value;
+      list[index][name] = inputType === "checkbox" ? e.target.checked : value;
       setExperience(list);
     } else {
       const list = [...customSections];
@@ -47,7 +53,14 @@ const CVMaker = () => {
     if (type === "education") {
       setEducation([
         ...education,
-        { institution: "", degree: "", startDate: "", endDate: "" },
+        {
+          institution: "",
+          degree: "",
+          startDate: "",
+          endDate: "",
+          grade: "",
+          gradeFormat: "CGPA",
+        },
       ]);
     } else if (type === "experience") {
       setExperience([
@@ -60,6 +73,14 @@ const CVMaker = () => {
           description: "",
         },
       ]);
+    }
+  };
+
+  const handleDeleteClick = (index, type) => {
+    if (type === "education") {
+      setEducation(education.filter((_, eduIndex) => eduIndex !== index));
+    } else if (type === "experience") {
+      setExperience(experience.filter((_, expIndex) => expIndex !== index));
     }
   };
 
@@ -84,86 +105,181 @@ const CVMaker = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    let yPos = 10;
     const pageHeight = doc.internal.pageSize.height;
-    const margin = 10;
-
-    const addNewPageIfNeeded = (currentY, increment) => {
-      if (currentY + increment > pageHeight - margin) {
-        doc.addPage();
-        return margin;
+  
+    // Start Y position for the content below the image
+    let currentY = 80; // Adjust based on the expected height of the image
+  
+    if (croppedPhoto) {
+      // Ensure `croppedPhoto` is a data URL. If it's a Blob, convert it first
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imgData = event.target.result;
+        addImageToPDF(doc, imgData, currentY, pageHeight);
+      };
+      if (croppedPhoto instanceof Blob) {
+        reader.readAsDataURL(croppedPhoto); // Convert Blob to Data URL
+      } else {
+        // Assume `croppedPhoto` is already a Data URL
+        addImageToPDF(doc, croppedPhoto, currentY, pageHeight);
       }
-      return currentY;
+    } else {
+      // No image, start adding content immediately
+      addPdfContent(doc, currentY, pageHeight);
+    }
+  };
+  
+  const addImageToPDF = (doc, imgData, currentY, pageHeight) => {
+    const imageWidth = 50; // Set image width
+    const imageHeight = 50; // Set image height
+    const imageX = (doc.internal.pageSize.getWidth() - imageWidth) / 2; // Center the image horizontally
+  
+    doc.addImage(imgData, 'JPEG', imageX, 10, imageWidth, imageHeight); // Adjust Y position as needed
+  
+    // Continue with the rest of the PDF content
+    addPdfContent(doc, currentY, pageHeight);
+  };
+  const addPdfContent = (doc, startY, pageHeight) => {
+    let currentY = startY;
+
+    const checkPageOverflow = (additionalHeight) => {
+      if (currentY + additionalHeight >= pageHeight - 10) {
+        doc.addPage();
+        currentY = 10; // Reset Y position to start of the new page
+      }
     };
 
-    if (croppedPhoto) {
-      const imgData = URL.createObjectURL(croppedPhoto);
-      doc.addImage(imgData, "JPEG", 80, yPos, 50, 50, "", "FAST");
-      yPos += 60;
+    // Adding personal information
+    doc.setFontSize(20);
+    doc.text(personalInfo.name, 105, currentY, { align: "center" });
+    currentY += 10;
+    doc.setFontSize(12);
+    doc.text(`Contact: ${personalInfo.contact}`, 10, currentY);
+    currentY += 6;
+    doc.text(`Email: ${personalInfo.email}`, 10, currentY);
+    currentY += 6;
+    doc.text(`Address: ${personalInfo.address}`, 10, currentY);
+    currentY += 6;
+    doc.text(`Summary:`, 10, currentY);
+    currentY += 6;
+    currentY = addMultiLineText(doc, personalInfo.summary, 10, currentY);
+    currentY += 10; // Add spacing after the summary
+
+    checkPageOverflow(10);
+
+    // Education Section
+    if (education.length > 0) {
+      doc.setFontSize(16);
+      doc.text("Education", 10, currentY);
+      currentY += 10;
+
+      education.forEach((edu) => {
+        const eduText = `${edu.degree} at ${edu.institution}`;
+        const eduDetails = `(${edu.startDate} - ${edu.endDate || "Present"})`;
+        const gradeText = edu.grade
+          ? `Grade: ${edu.grade} (${edu.gradeFormat})`
+          : "";
+        const descriptionHeight =
+          doc.splitTextToSize(edu.description, 180).length * 6;
+
+        // Calculate the total height needed for the education block
+        const requiredHeight =
+          6 + 6 + (gradeText ? 6 : 0) + descriptionHeight + 10;
+
+        checkPageOverflow(requiredHeight); // Check before adding content
+
+        doc.setFontSize(12);
+        doc.text(eduText, 10, currentY);
+        currentY += 6;
+        doc.text(eduDetails, 10, currentY);
+        currentY += 6;
+        if (gradeText) {
+          doc.text(gradeText, 10, currentY);
+          currentY += 6;
+        }
+        currentY = addMultiLineText(doc, edu.description, 10, currentY);
+        currentY += 10; // Add some space after each entry
+      });
+      currentY += 5;
     }
 
-    doc.setFontSize(20);
-    doc.text(personalInfo.name, 105, yPos, { align: "center" });
-    yPos = addNewPageIfNeeded(yPos, 20) + 10;
-    doc.setFontSize(12);
-    doc.text(`Contact: ${personalInfo.contact}`, 10, yPos);
-    yPos += 10;
-    doc.text(`Email: ${personalInfo.email}`, 10, yPos);
-    yPos += 10;
-    doc.text(`Address: ${personalInfo.address}`, 10, yPos);
-    yPos += 10;
-    doc.text(`Summary: ${personalInfo.summary}`, 10, yPos);
-    yPos += 20;
+    checkPageOverflow(10);
 
-    doc.setFontSize(16);
-    doc.text("Education", 10, yPos);
-    yPos += 10;
-    education.forEach((edu, index) => {
-      yPos = addNewPageIfNeeded(yPos, 20);
-      doc.setFontSize(12);
-      doc.text(`${edu.degree} at ${edu.institution}`, 10, yPos);
-      yPos += 10;
-      doc.text(`(${edu.startDate} - ${edu.endDate})`, 10, yPos);
-      yPos += 10;
-    });
-
-    yPos = addNewPageIfNeeded(yPos, 20);
-    doc.setFontSize(16);
-    doc.text("Experience", 10, yPos);
-    yPos += 10;
-    experience.forEach((exp, index) => {
-      yPos = addNewPageIfNeeded(yPos, 30);
-      doc.setFontSize(12);
-      doc.text(`${exp.jobTitle} at ${exp.company}`, 10, yPos);
-      yPos += 10;
-      doc.text(`(${exp.startDate} - ${exp.endDate})`, 10, yPos);
-      yPos += 10;
-      doc.text(exp.description, 10, yPos);
-      yPos += 10;
-    });
-
-    yPos = addNewPageIfNeeded(yPos, 20);
-    doc.setFontSize(16);
-    doc.text("Skills", 10, yPos);
-    yPos += 10;
-    doc.setFontSize(12);
-    doc.text(skills.join(", "), 10, yPos);
-    yPos += 10;
-
-    customSections.forEach((section, sIndex) => {
-      yPos = addNewPageIfNeeded(yPos, 20);
+    // Experience Section
+    if (experience.length > 0) {
       doc.setFontSize(16);
-      doc.text(section.title, 10, yPos);
-      yPos += 10;
-      section.content.forEach((item, cIndex) => {
-        yPos = addNewPageIfNeeded(yPos, 10);
-        doc.setFontSize(12);
-        doc.text(item, 10, yPos);
-        yPos += 10;
-      });
-    });
+      doc.text("Experience", 10, currentY);
+      currentY += 10;
 
+      experience.forEach((exp) => {
+        const expText = `${exp.jobTitle} at ${exp.company}`;
+        const expDetails = `(${exp.startDate} - ${exp.endDate || "Present"})`;
+        const descriptionHeight =
+          doc.splitTextToSize(exp.description, 180).length * 6;
+
+        // Calculate the total height needed for the experience block
+        const requiredHeight = 6 + 6 + descriptionHeight + 10;
+
+        checkPageOverflow(requiredHeight); // Check before adding content
+
+        doc.setFontSize(12);
+        doc.text(expText, 10, currentY);
+        currentY += 6;
+        doc.text(expDetails, 10, currentY);
+        currentY += 6;
+        currentY = addMultiLineText(doc, exp.description, 10, currentY);
+        currentY += 10; // Add some space after each entry
+      });
+      currentY += 5;
+    }
+
+    checkPageOverflow(10);
+
+    // Skills Section
+    if (skills.length > 0) {
+      doc.setFontSize(16);
+      doc.text("Skills", 10, currentY);
+      currentY += 10;
+
+      doc.setFontSize(12);
+      currentY = addMultiLineText(doc, skills.join(", "), 10, currentY);
+
+      checkPageOverflow(10);
+    }
+    checkPageOverflow(10);
+    // Custom Sections
+    if (customSections.length > 0) {
+      customSections.forEach((section) => {
+        const sectionTitleHeight = 10;
+        const contentHeight = section.content.reduce(
+          (acc, item) => acc + doc.splitTextToSize(item, 180).length * 6 + 5,
+          0
+        );
+        const requiredHeight = sectionTitleHeight + contentHeight;
+
+        checkPageOverflow(requiredHeight); // Check before adding content
+
+        doc.setFontSize(16);
+        doc.text(section.title, 10, currentY);
+        currentY += 10;
+
+        section.content.forEach((item) => {
+          currentY = addMultiLineText(doc, item, 10, currentY);
+          currentY += 5; // Add some space after each content
+        });
+
+        currentY += 5;
+      });
+    }
+    checkPageOverflow(10);
+    // Save the PDF at the end
     doc.save("CV.pdf");
+  };
+
+  const addMultiLineText = (doc, text, x, y) => {
+    const textLines = doc.splitTextToSize(text, 180); // 180 is the width of the line
+    doc.text(textLines, x, y);
+    return y + textLines.length * 6; // 6 is the line height
   };
 
   return (
@@ -263,6 +379,26 @@ const CVMaker = () => {
                 onChange={(e) => handleInputChange(e, index, "education")}
               />
             </div>
+            <label>Grade:</label>
+            <input
+              type="text"
+              name="grade"
+              value={edu.grade}
+              onChange={(e) => handleInputChange(e, index, "education")}
+            />
+            <label>Grade Format:</label>
+            <select
+              name="gradeFormat"
+              value={edu.gradeFormat}
+              onChange={(e) => handleInputChange(e, index, "education")}
+            >
+              <option value="CGPA">CGPA</option>
+              <option value="Percentage">Percentage</option>
+              <option value="Other">Other</option>
+            </select>
+            <button onClick={() => handleDeleteClick(index, "education")}>
+              Delete
+            </button>
           </div>
         ))}
         <button onClick={() => handleAddClick("education")}>
@@ -318,6 +454,9 @@ const CVMaker = () => {
               value={exp.description}
               onChange={(e) => handleInputChange(e, index, "experience")}
             />
+            <button onClick={() => handleDeleteClick(index, "experience")}>
+              Delete
+            </button>
           </div>
         ))}
         <button onClick={() => handleAddClick("experience")}>
