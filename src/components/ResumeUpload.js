@@ -5,7 +5,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import '../css/ResumeUpload.css';
 
 // Set the workerSrc to the correct path of the locally copied pdf.worker.mjs file
-pdfjsLib.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://bi-home.choreoapps.dev/pdf.worker.mjs`;
 
 const ResumeUpload = ({ setExtractedData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
