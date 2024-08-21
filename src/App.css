@@ -61,3 +61,20 @@
     padding: 20px;
   }
 }
+
+
+
+/* Hide the original input */
+input[type="file"] {
+  display: none;
+}
+
+/* Custom button style */
+.custom-file-upload {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
