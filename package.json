@@ -12,6 +12,7 @@
     "array-move": "^4.0.0",
     "axios": "^1.7.4",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "codemirror": "^5.65.17",

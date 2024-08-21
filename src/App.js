@@ -15,6 +15,7 @@ import AssetCustomizing from "./components/AssetCustomizing";
 import "./App.css";
 import EncryptDecrypt from "./components/EncryptDecrypt";
 import TextSummarizer from "./components/TextSummarizer";
+import TodoList from "./components/TodoList";
 
 function App() {
   return (
@@ -75,6 +76,12 @@ function App() {
           >
             Text Summarizer
           </NavLink>
+          <NavLink
+            to="/todo-list"
+            className={({ isActive }) => (isActive ? "active-tab" : "")}
+          >
+            Todo List
+          </NavLink>
         </nav>
         <div className="tab-content">
           <Routes>
@@ -90,6 +97,7 @@ function App() {
             <Route path="/asset-customizing" element={<AssetCustomizing />} />
             <Route path="/encrypt-decrypt" element={<EncryptDecrypt />} />
             <Route path="/text-summarizer" element={<TextSummarizer />} />
+            <Route path="/todo-list" element={<TodoList />} />
           </Routes>
         </div>
       </div>
