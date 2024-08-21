@@ -82,7 +82,10 @@ const EncryptDecrypt = () => {
             placeholder="Enter text to encrypt"
           />
         </div>
-        <button onClick={handleEncrypt} style={{ marginTop: "10px", width:"120px" }}>
+        <button
+          onClick={handleEncrypt}
+          style={{ marginTop: "10px", width: "120px" }}
+        >
           Encrypt
         </button>
         <div style={{ marginTop: "10px" }}>
@@ -108,7 +111,10 @@ const EncryptDecrypt = () => {
             placeholder="Enter text to decrypt"
           />
         </div>
-        <button onClick={handleDecrypt} style={{ marginTop: "10px", width:"120px" }}>
+        <button
+          onClick={handleDecrypt}
+          style={{ marginTop: "10px", width: "120px" }}
+        >
           Decrypt
         </button>
         <div style={{ marginTop: "10px" }}>
