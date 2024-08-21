@@ -4,7 +4,7 @@ import Select from "react-select";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Spinner } from "react-bootstrap"; // Import spinner from react-bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
 
 const AspectRatioOptions = [
   { value: "16:9", label: "16:9" },
@@ -61,10 +61,7 @@ const DraggableFile = ({ file, index, moveFile, removeFile }) => {
           </>
         ) : (
           <video width="150" controls>
-            <source
-              src={URL.createObjectURL(file)}
-              type={file.type}
-            />
+            <source src={URL.createObjectURL(file)} type={file.type} />
             Your browser does not support the video tag.
           </video>
         )}
@@ -185,8 +182,13 @@ const FileUploader = () => {
               type: file.type,
             });
             const convertedUrl = URL.createObjectURL(convertedFile);
-            newConvertedFiles.push({ url: convertedUrl, name: file.name, type: "image" });
-            if (newConvertedFiles.length === files.length) { // Check if all files are processed
+            newConvertedFiles.push({
+              url: convertedUrl,
+              name: file.name,
+              type: "image",
+            });
+            if (newConvertedFiles.length === files.length) {
+              // Check if all files are processed
               setConvertedFiles(newConvertedFiles);
               setLoading(false); // End loading spinner
             }
@@ -194,8 +196,13 @@ const FileUploader = () => {
         };
       } else if (file.type.startsWith("video/")) {
         const convertedUrl = URL.createObjectURL(file);
-        newConvertedFiles.push({ url: convertedUrl, name: file.name, type: "video" });
-        if (newConvertedFiles.length === files.length) { // Check if all files are processed
+        newConvertedFiles.push({
+          url: convertedUrl,
+          name: file.name,
+          type: "video",
+        });
+        if (newConvertedFiles.length === files.length) {
+          // Check if all files are processed
           setConvertedFiles(newConvertedFiles);
           setLoading(false); // End loading spinner
         }
@@ -218,9 +225,7 @@ const FileUploader = () => {
           <p>Drag & drop files here, or click to select files</p>
         </div>
 
-        <div
-          style={{ display: "flex", flexWrap: "wrap", marginTop: "20px" }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", marginTop: "20px" }}>
           {files.map((file, index) => (
             <DraggableFile
               key={file.name}
@@ -285,7 +290,10 @@ const FileUploader = () => {
             {convertedFiles.map((file, index) => (
               <div key={index} style={{ marginBottom: "10px" }}>
                 {file.type === "image" ? (
-                  <a href={file.url} download={`converted_${index}_${file.name}`}>
+                  <a
+                    href={file.url}
+                    download={`converted_${index}_${file.name}`}
+                  >
                     <img
                       src={file.url}
                       alt={`Converted ${index}`}
@@ -294,7 +302,10 @@ const FileUploader = () => {
                     <p>Download Image</p>
                   </a>
                 ) : (
-                  <a href={file.url} download={`converted_${index}_${file.name}`}>
+                  <a
+                    href={file.url}
+                    download={`converted_${index}_${file.name}`}
+                  >
                     <video width="150" controls>
                       <source src={file.url} type="video/mp4" />
                       Your browser does not support the video tag.
