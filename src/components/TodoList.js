@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { v4 as uuidv4 } from "uuid";
-import '../css/TodoList.css';
+import "../css/TodoList.css";
 
 const TodoListApp = () => {
   const [lists, setLists] = useState(() => {
@@ -188,245 +188,254 @@ const TodoList = ({
 
   return (
     <div className="list-container">
-     <div ref={addTaskRef} className="card shadow-sm m-3" style={{width:"400px"}}>
-      <div className="card-body" >
-        <h5 className="card-title d-flex justify-content-between mb-4">
-          {list.name}
-          <button
-            className="btn btn-link text-danger p-0 ml-auto"
-            style={{ marginLeft: "10px", width: "20px", boxShadow: "none" }}
-            onClick={() => onDeleteList(list.id)}
-          >
-            <i className="bi bi-trash"></i>
-          </button>
-        </h5>
-        {!isAddingTask ? (
-          <button
-            className="btn btn-link p-0 mb-3"
-            onClick={() => setIsAddingTask(true)}
-          >
-            <i className="bi bi-plus"></i> Add a task
-          </button>
-        ) : (
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control mb-2"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Task title"
-              style={{ boxShadow: "none" }}
-            />
-            <textarea
-              className="form-control mb-2"
-              value={detailsValue}
-              onChange={(e) => setDetailsValue(e.target.value)}
-              placeholder="Details"
-              style={{ boxShadow: "none" }}
-            />
-            <input
-              type="datetime-local"
-              className="form-control mb-2"
-              value={dateTime}
-              onChange={(e) => setDateTime(e.target.value)}
-              style={{ boxShadow: "none" }}
-            />
+      <div
+        ref={addTaskRef}
+        className="card shadow-sm m-3"
+        style={{ width: "400px" }}
+      >
+        <div className="card-body">
+          <h5 className="card-title d-flex justify-content-between mb-4">
+            {list.name}
             <button
-              className="btn btn-primary"
-              onClick={handleAddTask}
-              style={{ boxShadow: "none" }}
+              className="btn btn-link text-danger p-0 ml-auto"
+              style={{ marginLeft: "10px", width: "20px", boxShadow: "none" }}
+              onClick={() => onDeleteList(list.id)}
             >
-              Add Task
+              <i className="bi bi-trash"></i>
             </button>
-          </div>
-        )}
-        <ul className="list-group list-group-flush">
-          {activeTasks.map((task) => (
-            <li
-              key={task.id}
-              className="list-group-item d-flex justify-content-between align-items-center"
+          </h5>
+          {!isAddingTask ? (
+            <button
+              className="btn btn-link p-0 mb-3"
+              onClick={() => setIsAddingTask(true)}
             >
-              {editingTaskId === task.id ? (
-                <div className="w-100">
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    value={editingInputValue}
-                    onChange={(e) => setEditingInputValue(e.target.value)}
-                    placeholder="Task title"
-                    style={{ boxShadow: "none" }}
-                  />
-                  <textarea
-                    className="form-control mb-2"
-                    value={editingDetailsValue}
-                    onChange={(e) => setEditingDetailsValue(e.target.value)}
-                    placeholder="Details"
-                    style={{ boxShadow: "none" }}
-                  />
-                  <input
-                    type="datetime-local"
-                    className="form-control mb-2"
-                    value={editingDateTime}
-                    onChange={(e) => setEditingDateTime(e.target.value)}
-                    style={{ boxShadow: "none" }}
-                  />
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => handleUpdateTask(task.id)}
-                    style={{ boxShadow: "none" }}
-                  >
-                    Save
-                  </button>
-                </div>
-              ) : (
-                <div
-                  className="d-flex align-items-start w-100"
-                  onClick={() => {
-                    setEditingTaskId(task.id);
-                    setEditingInputValue(task.text);
-                    setEditingDetailsValue(task.details);
-                    setEditingDateTime(task.dateTime);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  <input
-                    type="checkbox"
-                    className="form-check-input mt-1"
-                    checked={task.done}
-                    onChange={() => onToggleDone(list.id, task.id)}
-                    style={{ marginRight: "10px" }}
-                  />
-                  <div className="text-wrap" style={{ wordBreak: "break-word" }}>
-                    <strong>{task.text}</strong>
-                    {task.details && <div>{task.details}</div>}
-                    {task.dateTime && (
-                      <small className="text-muted">
-                        <i className="bi bi-calendar"></i>{" "}
-                        {new Date(task.dateTime).toLocaleString("en-US", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </small>
-                    )}
-                  </div>
-                </div>
-              )}
-              {editingTaskId !== task.id && (
-                <button
-                  className="btn btn-link text-danger p-0 ml-auto"
-                  style={{ width: "20px", boxShadow: "none" }}
-                  onClick={() => onDeleteTask(list.id, task.id)}
-                >
-                  <i className="bi bi-trash"></i>
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-        <div className="mt-3">
-          <button
-            onClick={() => setShowCompleted(!showCompleted)}
-            className="btn btn-link p-0 text-decoration-none d-flex align-items-start mb-3"
-            style={{ boxShadow: "none", outline: "none" }}
-          >
-            <i
-              className={`bi ${showCompleted ? "bi-chevron-down" : "bi-chevron-right"}`}
-            ></i>{" "}
-            Completed ({completedTasks.length})
-          </button>
-          {showCompleted && (
-            <ul className="list-group list-group-flush">
-              {completedTasks.map((task) => (
-                <li
-                  key={task.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  {editingTaskId === task.id ? (
-                    <div className="w-100">
-                      <input
-                        type="text"
-                        className="form-control mb-2"
-                        value={editingInputValue}
-                        onChange={(e) => setEditingInputValue(e.target.value)}
-                        placeholder="Task title"
-                        style={{ boxShadow: "none" }}
-                      />
-                      <textarea
-                        className="form-control mb-2"
-                        value={editingDetailsValue}
-                        onChange={(e) => setEditingDetailsValue(e.target.value)}
-                        placeholder="Details"
-                        style={{ boxShadow: "none" }}
-                      />
-                      <input
-                        type="datetime-local"
-                        className="form-control mb-2"
-                        value={editingDateTime}
-                        onChange={(e) => setEditingDateTime(e.target.value)}
-                        style={{ boxShadow: "none" }}
-                      />
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleUpdateTask(task.id)}
-                        style={{ boxShadow: "none" }}
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <div
-                      className="d-flex align-items-start w-100"
-                      onClick={() => {
-                        setEditingTaskId(task.id);
-                        setEditingInputValue(task.text);
-                        setEditingDetailsValue(task.details);
-                        setEditingDateTime(task.dateTime);
-                      }}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <input
-                        type="checkbox"
-                        className="form-check-input mt-1"
-                        checked={task.done}
-                        onChange={() => onToggleDone(list.id, task.id)}
-                        style={{ marginRight: "10px" }}
-                      />
-                      <div
-                        className="text-wrap text-decoration-line-through"
-                        style={{ wordBreak: "break-word" }}
-                      >
-                        <strong>{task.text}</strong>
-                        {task.details && <div>{task.details}</div>}
-                        {task.dateTime && (
-                          <small className="text-muted">
-                            <i className="bi bi-calendar"></i>{" "}
-                            {new Date(task.dateTime).toLocaleString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </small>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {editingTaskId !== task.id && (
-                    <button
-                      className="btn btn-link text-danger p-0 ml-auto"
-                      style={{ width: "20px", boxShadow: "none" }}
-                      onClick={() => onDeleteTask(list.id, task.id)}
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
+              <i className="bi bi-plus"></i> Add a task
+            </button>
+          ) : (
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control mb-2"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Task title"
+                style={{ boxShadow: "none" }}
+              />
+              <textarea
+                className="form-control mb-2"
+                value={detailsValue}
+                onChange={(e) => setDetailsValue(e.target.value)}
+                placeholder="Details"
+                style={{ boxShadow: "none" }}
+              />
+              <input
+                type="datetime-local"
+                className="form-control mb-2"
+                value={dateTime}
+                onChange={(e) => setDateTime(e.target.value)}
+                style={{ boxShadow: "none" }}
+              />
+              <button
+                className="btn btn-primary"
+                onClick={handleAddTask}
+                style={{ boxShadow: "none" }}
+              >
+                Add Task
+              </button>
+            </div>
           )}
+          <ul className="list-group list-group-flush">
+            {activeTasks.map((task) => (
+              <li
+                key={task.id}
+                className="list-group-item d-flex justify-content-between align-items-center"
+              >
+                {editingTaskId === task.id ? (
+                  <div className="w-100">
+                    <input
+                      type="text"
+                      className="form-control mb-2"
+                      value={editingInputValue}
+                      onChange={(e) => setEditingInputValue(e.target.value)}
+                      placeholder="Task title"
+                      style={{ boxShadow: "none" }}
+                    />
+                    <textarea
+                      className="form-control mb-2"
+                      value={editingDetailsValue}
+                      onChange={(e) => setEditingDetailsValue(e.target.value)}
+                      placeholder="Details"
+                      style={{ boxShadow: "none" }}
+                    />
+                    <input
+                      type="datetime-local"
+                      className="form-control mb-2"
+                      value={editingDateTime}
+                      onChange={(e) => setEditingDateTime(e.target.value)}
+                      style={{ boxShadow: "none" }}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleUpdateTask(task.id)}
+                      style={{ boxShadow: "none" }}
+                    >
+                      Save
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className="d-flex align-items-start w-100"
+                    onClick={() => {
+                      setEditingTaskId(task.id);
+                      setEditingInputValue(task.text);
+                      setEditingDetailsValue(task.details);
+                      setEditingDateTime(task.dateTime);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <input
+                      type="checkbox"
+                      className="form-check-input mt-1"
+                      checked={task.done}
+                      onChange={() => onToggleDone(list.id, task.id)}
+                      style={{ marginRight: "10px" }}
+                    />
+                    <div
+                      className="text-wrap"
+                      style={{ wordBreak: "break-word" }}
+                    >
+                      <strong>{task.text}</strong>
+                      {task.details && <div>{task.details}</div>}
+                      {task.dateTime && (
+                        <small className="text-muted">
+                          <i className="bi bi-calendar"></i>{" "}
+                          {new Date(task.dateTime).toLocaleString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </small>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {editingTaskId !== task.id && (
+                  <button
+                    className="btn btn-link text-danger p-0 ml-auto"
+                    style={{ width: "20px", boxShadow: "none" }}
+                    onClick={() => onDeleteTask(list.id, task.id)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3">
+            <button
+              onClick={() => setShowCompleted(!showCompleted)}
+              className="btn btn-link p-0 text-decoration-none d-flex align-items-start mb-3"
+              style={{ boxShadow: "none", outline: "none" }}
+            >
+              <i
+                className={`bi ${showCompleted ? "bi-chevron-down" : "bi-chevron-right"}`}
+              ></i>{" "}
+              Completed ({completedTasks.length})
+            </button>
+            {showCompleted && (
+              <ul className="list-group list-group-flush">
+                {completedTasks.map((task) => (
+                  <li
+                    key={task.id}
+                    className="list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    {editingTaskId === task.id ? (
+                      <div className="w-100">
+                        <input
+                          type="text"
+                          className="form-control mb-2"
+                          value={editingInputValue}
+                          onChange={(e) => setEditingInputValue(e.target.value)}
+                          placeholder="Task title"
+                          style={{ boxShadow: "none" }}
+                        />
+                        <textarea
+                          className="form-control mb-2"
+                          value={editingDetailsValue}
+                          onChange={(e) =>
+                            setEditingDetailsValue(e.target.value)
+                          }
+                          placeholder="Details"
+                          style={{ boxShadow: "none" }}
+                        />
+                        <input
+                          type="datetime-local"
+                          className="form-control mb-2"
+                          value={editingDateTime}
+                          onChange={(e) => setEditingDateTime(e.target.value)}
+                          style={{ boxShadow: "none" }}
+                        />
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleUpdateTask(task.id)}
+                          style={{ boxShadow: "none" }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        className="d-flex align-items-start w-100"
+                        onClick={() => {
+                          setEditingTaskId(task.id);
+                          setEditingInputValue(task.text);
+                          setEditingDetailsValue(task.details);
+                          setEditingDateTime(task.dateTime);
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <input
+                          type="checkbox"
+                          className="form-check-input mt-1"
+                          checked={task.done}
+                          onChange={() => onToggleDone(list.id, task.id)}
+                          style={{ marginRight: "10px" }}
+                        />
+                        <div
+                          className="text-wrap text-decoration-line-through"
+                          style={{ wordBreak: "break-word" }}
+                        >
+                          <strong>{task.text}</strong>
+                          {task.details && <div>{task.details}</div>}
+                          {task.dateTime && (
+                            <small className="text-muted">
+                              <i className="bi bi-calendar"></i>{" "}
+                              {new Date(task.dateTime).toLocaleString("en-US", {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </small>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {editingTaskId !== task.id && (
+                      <button
+                        className="btn btn-link text-danger p-0 ml-auto"
+                        style={{ width: "20px", boxShadow: "none" }}
+                        onClick={() => onDeleteTask(list.id, task.id)}
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
