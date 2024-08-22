@@ -1,0 +1,69 @@
+/* src/components/TodoList.css */
+.container-todo {
+    position: relative; /* Ensure the container is positioned */
+    background-image: url('../assets/todo-bg-3.png'); /* Replace with the actual image path */
+    background-size: contain; /* Ensure the image covers the container */
+    background-position: center; /* Centers the image */
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.041);
+    min-height: 70vh;
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden; /* Ensure content stays within the container */
+}
+
+.container-todo::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+    border-radius: 10px; /* Match the container's border radius */
+    z-index: 1; /* Ensure the overlay is above the background but below the content */
+}
+
+/* Content inside the container */
+.container-todo > * {
+    position: relative;
+    z-index: 2; /* Ensure the content is above the overlay */
+}
+
+
+/* Flexbox layout for todo lists */
+.container-todo {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap if needed */
+    align-items: center; /* Align items at the top */
+    gap: 20px; /* Space between cards */
+}
+
+.btn-link {
+    display: inline-block; /* Ensure no additional space is added */
+}
+
+
+.list-container {
+    flex: 1;
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    min-height: 300px; /* Example fixed height */
+    overflow-y: auto; /* Allows scrolling if content overflows */
+}
+
+
+/* Media queries for smaller devices */
+@media (max-width: 768px) {
+    .container-todo {
+        padding: 10px;
+        flex-direction: column; /* Stack items vertically on small screens */
+        align-items: stretch; /* Ensure items take up full width */
+    }
+}
