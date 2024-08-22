@@ -283,26 +283,26 @@ const TodoList = ({
                     </button>
                   </div>
                 ) : (
-                  <div
-                    className="d-flex align-items-start w-100"
-                    onClick={() => {
-                      setEditingTaskId(task.id);
-                      setEditingInputValue(task.text);
-                      setEditingDetailsValue(task.details);
-                      setEditingDateTime(task.dateTime);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <div className="d-flex align-items-start w-100">
                     <input
                       type="checkbox"
                       className="form-check-input mt-1"
                       checked={task.done}
-                      onChange={() => onToggleDone(list.id, task.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        onToggleDone(list.id, task.id);
+                      }}
                       style={{ marginRight: "10px" }}
                     />
                     <div
                       className="text-wrap"
-                      style={{ wordBreak: "break-word" }}
+                      style={{ wordBreak: "break-word", cursor: "pointer" }}
+                      onClick={() => {
+                        setEditingTaskId(task.id);
+                        setEditingInputValue(task.text);
+                        setEditingDetailsValue(task.details);
+                        setEditingDateTime(task.dateTime);
+                      }}
                     >
                       <strong>{task.text}</strong>
                       {task.details && <div>{task.details}</div>}
@@ -338,7 +338,9 @@ const TodoList = ({
               style={{ boxShadow: "none", outline: "none" }}
             >
               <i
-                className={`bi ${showCompleted ? "bi-chevron-down" : "bi-chevron-right"}`}
+                className={`bi ${
+                  showCompleted ? "bi-chevron-down" : "bi-chevron-right"
+                }`}
               ></i>{" "}
               Completed ({completedTasks.length})
             </button>
@@ -384,26 +386,26 @@ const TodoList = ({
                         </button>
                       </div>
                     ) : (
-                      <div
-                        className="d-flex align-items-start w-100"
-                        onClick={() => {
-                          setEditingTaskId(task.id);
-                          setEditingInputValue(task.text);
-                          setEditingDetailsValue(task.details);
-                          setEditingDateTime(task.dateTime);
-                        }}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <div className="d-flex align-items-start w-100">
                         <input
                           type="checkbox"
                           className="form-check-input mt-1"
                           checked={task.done}
-                          onChange={() => onToggleDone(list.id, task.id)}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            onToggleDone(list.id, task.id);
+                          }}
                           style={{ marginRight: "10px" }}
                         />
                         <div
                           className="text-wrap text-decoration-line-through"
-                          style={{ wordBreak: "break-word" }}
+                          style={{ wordBreak: "break-word", cursor: "pointer" }}
+                          onClick={() => {
+                            setEditingTaskId(task.id);
+                            setEditingInputValue(task.text);
+                            setEditingDetailsValue(task.details);
+                            setEditingDateTime(task.dateTime);
+                          }}
                         >
                           <strong>{task.text}</strong>
                           {task.details && <div>{task.details}</div>}
