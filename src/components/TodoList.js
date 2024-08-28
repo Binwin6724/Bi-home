@@ -16,6 +16,44 @@ const TodoListApp = () => {
     localStorage.setItem("lists", JSON.stringify(lists));
   }, [lists]);
 
+  useEffect(() => {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0); // Midnight time of the next day
+    const timeUntilMidnight = midnight.getTime() - now.getTime();
+  
+    const timeoutId = setTimeout(() => {
+      resetRepeatingTasks();
+      scheduleNextMidnightReset();
+    }, timeUntilMidnight);
+  
+    return () => clearTimeout(timeoutId);
+  }, []);
+  
+  const scheduleNextMidnightReset = () => {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0); // Midnight time of the next day
+    const timeUntilMidnight = midnight.getTime() - now.getTime();
+  
+    setTimeout(() => {
+      resetRepeatingTasks();
+      scheduleNextMidnightReset(); // Schedule the next reset
+    }, timeUntilMidnight);
+  };
+  
+  const resetRepeatingTasks = () => {
+    setLists((prevLists) =>
+      prevLists.map((list) => ({
+        ...list,
+        tasks: list.tasks.map((task) =>
+          task.repeating ? { ...task, done: false } : task
+        ),
+      }))
+    );
+  };
+  
+
   const addNewList = () => {
     const listName = prompt("Enter the name for the new list:");
     if (listName) {
@@ -23,7 +61,7 @@ const TodoListApp = () => {
     }
   };
 
-  const addTaskToList = (listId, taskText, taskDetails, taskDateTime) => {
+  const addTaskToList = (listId, taskText, taskDetails, taskDateTime, repeating) => {
     setLists(
       lists.map((list) =>
         list.id === listId
@@ -36,6 +74,7 @@ const TodoListApp = () => {
                   text: taskText,
                   details: taskDetails,
                   dateTime: taskDateTime,
+                  repeating: repeating,
                   done: false,
                 },
               ],
@@ -67,13 +106,16 @@ const TodoListApp = () => {
           ? {
               ...list,
               tasks: list.tasks.map((task) =>
-                task.id === taskId ? { ...task, done: !task.done } : task
+                task.id === taskId
+                  ? { ...task, done: !task.done } // Toggle the done status
+                  : task
               ),
             }
           : list
       )
     );
   };
+  
 
   const deleteTaskInList = (listId, taskId) => {
     setLists(
@@ -148,6 +190,7 @@ const TodoList = ({
   const [editingInputValue, setEditingInputValue] = useState("");
   const [editingDetailsValue, setEditingDetailsValue] = useState("");
   const [editingDateTime, setEditingDateTime] = useState("");
+  const [repeating, setRepeating] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
 
   const addTaskRef = useRef(null);
@@ -156,6 +199,7 @@ const TodoList = ({
     const handleClickOutside = (event) => {
       if (addTaskRef.current && !addTaskRef.current.contains(event.target)) {
         setIsAddingTask(false);
+        resetInputFields();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -164,12 +208,18 @@ const TodoList = ({
     };
   }, [addTaskRef]);
 
+  const resetInputFields = () => {
+    setInputValue("");
+    setDetailsValue("");
+    setDateTime("");
+    setRepeating(false);
+    setEditingTaskId(null);
+  };
+
   const handleAddTask = () => {
     if (inputValue.trim()) {
-      onAddTask(list.id, inputValue, detailsValue, dateTime);
-      setInputValue("");
-      setDetailsValue("");
-      setDateTime("");
+      onAddTask(list.id, inputValue, detailsValue, dateTime, repeating);
+      resetInputFields();
       setIsAddingTask(false);
     }
   };
@@ -179,8 +229,17 @@ const TodoList = ({
       text: editingInputValue,
       details: editingDetailsValue,
       dateTime: editingDateTime,
+      repeating: repeating,
     });
-    setEditingTaskId(null);
+    resetInputFields();
+  };
+
+  const startEditingTask = (task) => {
+    setEditingTaskId(task.id);
+    setEditingInputValue(task.text);
+    setEditingDetailsValue(task.details);
+    setEditingDateTime(task.dateTime);
+    setRepeating(task.repeating);
   };
 
   const completedTasks = list.tasks.filter((task) => task.done);
@@ -235,6 +294,21 @@ const TodoList = ({
                 onChange={(e) => setDateTime(e.target.value)}
                 style={{ boxShadow: "none" }}
               />
+              <div className="form-check mb-2">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  checked={repeating}
+                  onChange={(e) => setRepeating(e.target.checked)}
+                  id={`repeating-${list.id}`}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor={`repeating-${list.id}`}
+                >
+                  Repeating
+                </label>
+              </div>
               <button
                 className="btn btn-primary"
                 onClick={handleAddTask}
@@ -274,6 +348,21 @@ const TodoList = ({
                       onChange={(e) => setEditingDateTime(e.target.value)}
                       style={{ boxShadow: "none" }}
                     />
+                    <div className="form-check mb-2">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        checked={repeating}
+                        onChange={(e) => setRepeating(e.target.checked)}
+                        id={`repeating-edit-${task.id}`}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor={`repeating-edit-${task.id}`}
+                      >
+                        Repeating
+                      </label>
+                    </div>
                     <button
                       className="btn btn-primary"
                       onClick={() => handleUpdateTask(task.id)}
@@ -297,12 +386,7 @@ const TodoList = ({
                     <div
                       className="text-wrap"
                       style={{ wordBreak: "break-word", cursor: "pointer" }}
-                      onClick={() => {
-                        setEditingTaskId(task.id);
-                        setEditingInputValue(task.text);
-                        setEditingDetailsValue(task.details);
-                        setEditingDateTime(task.dateTime);
-                      }}
+                      onClick={() => startEditingTask(task)}
                     >
                       <strong>{task.text}</strong>
                       {task.details && <div>{task.details}</div>}
@@ -315,6 +399,9 @@ const TodoList = ({
                             day: "numeric",
                           })}
                         </small>
+                      )}
+                      {task.repeating && (
+                        <div className="badge bg-primary" style={{marginLeft:"10px"}}>Repeating</div>
                       )}
                     </div>
                   </div>
@@ -377,6 +464,21 @@ const TodoList = ({
                           onChange={(e) => setEditingDateTime(e.target.value)}
                           style={{ boxShadow: "none" }}
                         />
+                        <div className="form-check mb-2">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            checked={repeating}
+                            onChange={(e) => setRepeating(e.target.checked)}
+                            id={`repeating-edit-${task.id}`}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`repeating-edit-${task.id}`}
+                          >
+                            Repeating
+                          </label>
+                        </div>
                         <button
                           className="btn btn-primary"
                           onClick={() => handleUpdateTask(task.id)}
@@ -400,12 +502,7 @@ const TodoList = ({
                         <div
                           className="text-wrap text-decoration-line-through"
                           style={{ wordBreak: "break-word", cursor: "pointer" }}
-                          onClick={() => {
-                            setEditingTaskId(task.id);
-                            setEditingInputValue(task.text);
-                            setEditingDetailsValue(task.details);
-                            setEditingDateTime(task.dateTime);
-                          }}
+                          onClick={() => startEditingTask(task)}
                         >
                           <strong>{task.text}</strong>
                           {task.details && <div>{task.details}</div>}
@@ -418,6 +515,9 @@ const TodoList = ({
                                 day: "numeric",
                               })}
                             </small>
+                          )}
+                          {task.repeating && (
+                            <div className="badge bg-primary">Repeating</div>
                           )}
                         </div>
                       </div>
