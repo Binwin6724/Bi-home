@@ -191,7 +191,7 @@ const TodoList = ({
       <div
         ref={addTaskRef}
         className="card shadow-sm m-3"
-        style={{ width: "400px" }}
+        style={{ minWidth: "400px" }}
       >
         <div className="card-body">
           <h5 className="card-title d-flex justify-content-between mb-4">

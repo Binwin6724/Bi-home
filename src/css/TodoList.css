@@ -34,7 +34,6 @@
     z-index: 2; /* Ensure the content is above the overlay */
 }
 
-
 /* Flexbox layout for todo lists */
 .container-todo {
     display: flex;
@@ -43,21 +42,23 @@
     gap: 20px; /* Space between cards */
 }
 
-.btn-link {
-    display: inline-block; /* Ensure no additional space is added */
-}
-
-
 .list-container {
-    flex: 1;
+    flex: 1 1 calc(35% - 40px); /* Allow flexibility for different screen sizes */
     margin: 10px;
     padding: 10px;
     border: none;
     border-radius: 8px;
     min-height: 300px; /* Example fixed height */
     overflow-y: auto; /* Allows scrolling if content overflows */
+    background-color: white; /* Ensure the list has a background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added a subtle shadow for better card appearance */
 }
 
+/* Ensure the container doesn't overflow the viewport */
+.container-todo {
+    max-width: 100vw;
+    overflow-x: auto;
+}
 
 /* Media queries for smaller devices */
 @media (max-width: 768px) {
@@ -66,4 +67,12 @@
         flex-direction: column; /* Stack items vertically on small screens */
         align-items: stretch; /* Ensure items take up full width */
     }
+
+    .list-container {
+        flex: 1 1 100%; /* Make each list take up full width on small screens */
+    }
+}
+
+.btn-link {
+    display: inline-block; /* Ensure no additional space is added */
 }
