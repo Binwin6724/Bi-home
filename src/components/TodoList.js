@@ -133,7 +133,7 @@ const TodoListApp = () => {
 
   return (
     <div className="container-todo mt-4">
-      <div className="d-flex justify-content-between mb-3">
+      <div className="d-flex justify-content-between mb-3 heading-text">
         <h1 style={{ color: "white" }}>Your Lists</h1>
         <button
           className="btn btn-primary"
@@ -250,7 +250,6 @@ const TodoList = ({
       <div
         ref={addTaskRef}
         className="card shadow-sm m-3"
-        style={{ minWidth: "400px" }}
       >
         <div className="card-body">
           <h5 className="card-title d-flex justify-content-between mb-4">

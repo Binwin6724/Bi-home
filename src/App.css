@@ -78,3 +78,14 @@ input[type="file"] {
   border-radius: 4px;
   background-color: #f0f0f0;
 }
+
+/* src/App.css */
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler-icon {
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+}
