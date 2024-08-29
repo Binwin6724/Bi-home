@@ -1,0 +1,57 @@
+.coin {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin: 0 auto;
+  perspective: 1000px;
+}
+
+.coin-side {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  transition: transform 2s; /* Increase duration for more rotations */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.heads {
+  transform: rotateY(0deg);
+}
+
+.tails {
+  transform: rotateY(180deg);
+}
+
+.flipping .heads {
+  transform: rotateY(1440deg); /* 4 full rotations (360 * 4) */
+}
+
+.flipping .tails {
+  transform: rotateY(1620deg); /* 4.5 full rotations (360 * 4 + 180) */
+}
+
+.coin-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.coin-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+  text-shadow: 1px 1px 2px #fff;
+  visibility: hidden; /* Hide text initially */
+}
+
+.show-text {
+  visibility: visible; /* Show text at the end of the flip */
+}

@@ -14,6 +14,10 @@ import EncryptDecrypt from "./components/EncryptDecrypt";
 import TextSummarizer from "./components/TextSummarizer";
 import TodoList from "./components/TodoList";
 import "./App.css";
+import JSONValidator from "./components/JSONValidator";
+import EncodingDecodingTool from "./components/EncodingDecodingTool";
+import BMICalculator from "./components/BMICalculator";
+import CoinFlip from "./components/CoinFlip";
 
 function App() {
   return (
@@ -34,6 +38,10 @@ function App() {
           <Route path="/encrypt-decrypt" element={<EncryptDecrypt />} />
           <Route path="/text-summarizer" element={<TextSummarizer />} />
           <Route path="/todo-list" element={<TodoList />} />
+          <Route path="/json-validator" element={<JSONValidator />} />
+          <Route path="/encoding-decoding" element={<EncodingDecodingTool />} />
+          <Route path="/bmi-calculator" element={<BMICalculator />} />
+          <Route path="/coin-flip" element={<CoinFlip />} />
         </Routes>
       </div>
     </Router>
