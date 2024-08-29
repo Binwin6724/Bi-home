@@ -52,7 +52,7 @@ const Home = () => {
             </p>
             <Link to="/converter">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Square Feet Converter</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Square Feet Converter</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -69,7 +69,7 @@ const Home = () => {
             </p>
             <Link to="/height-converter">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Height Converter</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Height Converter</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -86,7 +86,7 @@ const Home = () => {
             </p>
             <Link to="/expense-tracker">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Expense Tracker</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Expense Tracker</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -104,7 +104,7 @@ const Home = () => {
             </p>
             <Link to="/experience-calculator">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Experience Calculator</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Experience Calculator</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -122,7 +122,7 @@ const Home = () => {
             </p>
             <Link to="/image-to-pdf">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Image to PDF</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Image to PDF</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -140,7 +140,7 @@ const Home = () => {
             </p>
             <Link to="/asset-customizing">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Asset Customizing</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Asset Customizing</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -157,7 +157,7 @@ const Home = () => {
             </p>
             <Link to="/encrypt-decrypt">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Encrypt & Decrypt</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Encrypt & Decrypt</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -174,7 +174,7 @@ const Home = () => {
             </p>
             <Link to="/text-summarizer">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Text Summarizer</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Text Summarizer</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -192,7 +192,7 @@ const Home = () => {
             </p>
             <Link to="/todo-list">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Todo List</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Todo List</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -210,7 +210,7 @@ const Home = () => {
             </p>
             <Link to="/json-validator">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to JSON Validator</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to JSON Validator</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -228,7 +228,7 @@ const Home = () => {
             </p>
             <Link to="/encoding-decoding">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>
                   Go to Encoding & Decoding Tool
                 </Button>
               </OverlayTrigger>
@@ -247,7 +247,7 @@ const Home = () => {
             </p>
             <Link to="/bmi-calculator">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to BMI Calculator</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to BMI Calculator</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
@@ -264,7 +264,7 @@ const Home = () => {
             </p>
             <Link to="/coin-flip">
               <OverlayTrigger placement="right" overlay={renderTooltip}>
-                <Button variant="primary">Go to Coin Flip</Button>
+                <Button variant="primary" style={{boxShadow: "none", outline: "none"}}>Go to Coin Flip</Button>
               </OverlayTrigger>
             </Link>
           </Accordion.Body>
