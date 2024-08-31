@@ -18,6 +18,7 @@ import JSONValidator from "./components/JSONValidator";
 import EncodingDecodingTool from "./components/EncodingDecodingTool";
 import BMICalculator from "./components/BMICalculator";
 import CoinFlip from "./components/CoinFlip";
+import MarkdownEditor from "./components/MarkdownEditor";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/encoding-decoding" element={<EncodingDecodingTool />} />
           <Route path="/bmi-calculator" element={<BMICalculator />} />
           <Route path="/coin-flip" element={<CoinFlip />} />
+          <Route path="/markdown-editor" element={<MarkdownEditor />} />
         </Routes>
       </div>
     </Router>
